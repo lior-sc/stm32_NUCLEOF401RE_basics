@@ -8,7 +8,9 @@
 #include "main.h"
 #include "mpu6050.h"
 
- mpu6050 acc(0);
+extern I2C_HandleTypeDef hi2c1;
+
+mpu6050 acc(hi2c1, GPIO_PIN_RESET);
 
 void main_loop()
 {
