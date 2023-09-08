@@ -29,20 +29,26 @@ mpu6050::~mpu6050() {
 }
 
 HAL_StatusTypeDef mpu6050::init(){
+	/**@brief
+	 * In this function we are going to initialize the MPU6050 according to our needs
+	 */
 	HAL_StatusTypeDef ret;
-	uint8_t tx_buf = MPU6050_RA_WHO_AM_I;
-	uint8_t rx_buf[3] = {0x00,0x00,0x00};
+	uint8_t tx_buf[10] = {0};
+//	uint8_t rx_buf[10] = {0};
 
 
-	// This segment deals with direct transmit-recieve interface
-	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, &tx_buf, 1, HAL_MAX_DELAY);
-	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS>>1, rx_buf, 1, HAL_MAX_DELAY);
+	// set power management registers
+	tx_buf[0] = MPU6050_RA_PWR_MGMT_1;
+	tx_buf[1] = 0b00001001; //value written to PWR_MGMT_1 register
+	tx_buf[2] = 0b00000000; //value written to PWR_MGMT_2 register
 
-	// This method is a shortened HAL version which includes the first transmission
-	rx_buf[0] = 0x00;
-	ret = HAL_I2C_Mem_Read(hi2c, MPU6050_ADDRESS, MPU6050_RA_WHO_AM_I, 1, rx_buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 3, HAL_MAX_DELAY);
 
-
+	/*
+	// read power management registers (for debug purposes)
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, rx_buf, 2, HAL_MAX_DELAY);
+	*/
 	return ret;
 }
 
@@ -78,5 +84,22 @@ HAL_StatusTypeDef mpu6050::who_am_i(uint8_t *device_address)
 	return ret;
 }
 
+HAL_StatusTypeDef mpu6050::set_clock_source(uint8_t clock_source)
+{
+	HAL_StatusTypeDef ret;
+	uint8_t tx_buf[2] = {MPU6050_RA_PWR_MGMT_1, 0x00};
+	uint8_t rx_buf = 0x00;
 
+	// read current register status
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, &rx_buf, 1, HAL_MAX_DELAY);
+
+	// Input desired clock source value
+	tx_buf[1] = (rx_buf & 0b11111000) | (clock_source & 0b00000111);
+
+	// write adjusted value to register
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 2, HAL_MAX_DELAY);
+
+	return ret;
+}
 
