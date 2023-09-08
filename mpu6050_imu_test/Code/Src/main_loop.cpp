@@ -10,13 +10,15 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
-mpu6050 acc(hi2c1, GPIO_PIN_RESET);
+mpu6050 acc(GPIO_PIN_RESET);
 
 void main_loop()
 {
 	while(1)
 	{
-
+		acc.init();
+		HAL_Delay(1000);
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	}
 }
 
