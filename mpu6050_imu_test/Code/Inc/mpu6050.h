@@ -13,7 +13,7 @@
 
 #include "stm32f4xx_hal.h"
 
-//namespace MPU6050_NAMESPACE {
+//namespace MPU6050_IMU{
 
 /******************************MPU6050 Addresses******************************/
 const uint8_t MPU6050_ADDRESS_AD0_LOW = 0x68;	// this is a 7 bit representation. the last bit is for read/write notation
@@ -142,18 +142,19 @@ class mpu6050 {
 private:
 	// Addresses & constants
 	// Variables
-	uint8_t MPU6050_ADDRESS = MPU6050_ADDRESS_AD0_LOW;	// shift address 1 bit left to leave space for read/write bit
-	uint8_t i2c_buf[12];
+	uint8_t MPU6050_ADDRESS = MPU6050_ADDRESS_AD0_LOW << 1;	// shift address 1 bit left to leave space for read/write bit
+	I2C_HandleTypeDef *hi2c;		// This is a pointer to an I2C handle.
 
 public:
 	// Variables
 
 	// Constructor, Destructor
-	mpu6050(uint8_t);
+	mpu6050(uint8_t, I2C_HandleTypeDef *);
 	virtual ~mpu6050();
 
 	// Functions
-	bool init();
+	HAL_StatusTypeDef init();
+	HAL_StatusTypeDef who_am_i(uint8_t *);
 }; // end of class
 
 
