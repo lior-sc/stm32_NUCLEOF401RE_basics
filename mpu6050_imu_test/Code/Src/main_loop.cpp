@@ -19,6 +19,8 @@ void main_loop()
 		acc.init();
 		uint8_t imu_address = 0x00;
 		acc.who_am_i(&imu_address);
+		acc.set_sleep_enabled();
+		acc.set_sleep_disabled();
 		HAL_Delay(1000);
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	}

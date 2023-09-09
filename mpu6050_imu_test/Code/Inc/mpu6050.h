@@ -182,7 +182,8 @@ public:
 	HAL_StatusTypeDef set_clock_source(uint8_t);
 	HAL_StatusTypeDef set_fullscale_accel_range(uint8_t);
 	HAL_StatusTypeDef set_fullscale_gyro_range(uint8_t);
-	HAL_StatusTypeDef set_sleep_enabled(uint8_t);
+	HAL_StatusTypeDef set_sleep_enabled();
+	HAL_StatusTypeDef set_sleep_disabled();
 }; // end of class
 
 

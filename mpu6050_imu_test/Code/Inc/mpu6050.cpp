@@ -90,6 +90,8 @@ HAL_StatusTypeDef mpu6050::set_clock_source(uint8_t clock_source)
 	uint8_t tx_buf[2] = {MPU6050_RA_PWR_MGMT_1, 0x00};
 	uint8_t rx_buf = 0x00;
 
+	// Make sure
+
 	// read current register status
 	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 1, HAL_MAX_DELAY);
 	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, &rx_buf, 1, HAL_MAX_DELAY);
@@ -99,6 +101,100 @@ HAL_StatusTypeDef mpu6050::set_clock_source(uint8_t clock_source)
 
 	// write adjusted value to register
 	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 2, HAL_MAX_DELAY);
+
+	return ret;
+}
+
+HAL_StatusTypeDef mpu6050::set_fullscale_accel_range(uint8_t accel_fs_range)
+{
+	HAL_StatusTypeDef ret;
+	uint8_t tx_buf[2] = {MPU6050_RA_ACCEL_CONFIG, 0x00};
+	uint8_t rx_buf = 0x00;
+
+	// make sure the input value is in the option range
+	if(accel_fs_range > 3){
+		// not in range. go back
+		return HAL_ERROR;
+	}
+
+	// read current register status
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, &rx_buf, 1, HAL_MAX_DELAY);
+
+	// build byte to write to register
+	tx_buf[1] = rx_buf & 0b11100111;	// set the afs_sel bits to zero
+	tx_buf[1] |= accel_fs_range << 3;		// input the accel_fs_range to the register
+
+	// write back the value to the register
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 2, HAL_MAX_DELAY);
+
+	return ret;
+}
+
+HAL_StatusTypeDef mpu6050::set_fullscale_gyro_range(uint8_t gyro_fs_range)
+{
+	HAL_StatusTypeDef ret;
+	uint8_t buf = 0x00;
+
+	// make sure the input value is in the option range
+	if(gyro_fs_range > 3){
+		// not in range. go back
+		return HAL_ERROR;
+	}
+
+	// read current register status
+	ret = HAL_I2C_Mem_Read(hi2c, MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 1, &buf, 1, HAL_MAX_DELAY);
+
+	// build byte to write to register
+	buf &= 0b11100111;			// set the afs_sel bits to zero
+	buf |= gyro_fs_range << 3;	// set the FS_SEL bits to required value
+
+	// write back the value to the register
+	ret = HAL_I2C_Mem_Write(hi2c, MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 1, &buf, 1, HAL_MAX_DELAY);
+
+	return ret;
+}
+
+HAL_StatusTypeDef mpu6050::set_sleep_enabled()
+{
+	HAL_StatusTypeDef ret;
+	uint8_t buf[2] = {MPU6050_RA_PWR_MGMT_1, 0x00};
+
+	// read current register status
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, &buf[1], 1, HAL_MAX_DELAY);
+
+	// build byte to write to register
+	buf[1] |= 0b01000000;			// set the sleep bit to 1
+
+	// write back the value to the register
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, buf, 2, HAL_MAX_DELAY);
+
+	// for debug purposes
+	buf[1] = 0x00;
+	HAL_I2C_Mem_Read(hi2c, MPU6050_ADDRESS, buf[0], 1, &buf[1], 1, HAL_MAX_DELAY);
+
+	return ret;
+}
+
+HAL_StatusTypeDef mpu6050::set_sleep_disabled()
+{
+	HAL_StatusTypeDef ret;
+	uint8_t buf[2] = {MPU6050_RA_PWR_MGMT_1, 0x00};
+
+	// read current register status
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, buf, 1, HAL_MAX_DELAY);
+	ret = HAL_I2C_Master_Receive(hi2c, MPU6050_ADDRESS, &buf[1], 1, HAL_MAX_DELAY);
+
+	// build byte to write to register
+	buf[1] &= 0b10111111;			// set the sleep bit to 0
+
+	// write back the value to the register
+	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, buf, 2, HAL_MAX_DELAY);
+
+	// for debug purposes
+	buf[1] = 0x00;
+	HAL_I2C_Mem_Read(hi2c, MPU6050_ADDRESS, buf[0], 1, &buf[1], 1,HAL_MAX_DELAY);
 
 	return ret;
 }
