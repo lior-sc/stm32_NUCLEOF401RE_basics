@@ -169,6 +169,13 @@ private:
 	uint8_t MPU6050_ADDRESS = MPU6050_ADDRESS_AD0_LOW << 1;	// shift address 1 bit left to leave space for read/write bit
 	I2C_HandleTypeDef *hi2c;		// This is a pointer to an I2C handle.
 
+	const double g = 9.81;		// m/s^2
+	double ACC_FS_VAL = 2;				// g
+	double GYRO_FS_VAL = 250;			// deg/s
+
+	HAL_StatusTypeDef set_accel_fullscale_range(uint8_t);
+	HAL_StatusTypeDef set_gyro_fullscale_range(uint8_t);
+
 public:
 	// Variables
 
@@ -180,10 +187,18 @@ public:
 	HAL_StatusTypeDef init();
 	HAL_StatusTypeDef who_am_i(uint8_t *);
 	HAL_StatusTypeDef set_clock_source(uint8_t);
-	HAL_StatusTypeDef set_fullscale_accel_range(uint8_t);
-	HAL_StatusTypeDef set_fullscale_gyro_range(uint8_t);
 	HAL_StatusTypeDef set_sleep_enabled();
 	HAL_StatusTypeDef set_sleep_disabled();
+	HAL_StatusTypeDef set_accel_fullscale_2G();
+	HAL_StatusTypeDef set_accel_fullscale_4G();
+	HAL_StatusTypeDef set_accel_fullscale_8G();
+	HAL_StatusTypeDef set_accel_fullscale_16G();
+	HAL_StatusTypeDef set_gyro_fullscale_250();
+	HAL_StatusTypeDef set_gyro_fullscale_500();
+	HAL_StatusTypeDef set_gyro_fullscale_1000();
+	HAL_StatusTypeDef set_gyro_fullscale_2000();
+	HAL_StatusTypeDef get_data_raw(int16_t *);
+
 }; // end of class
 
 
