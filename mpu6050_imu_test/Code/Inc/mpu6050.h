@@ -178,6 +178,13 @@ private:
 
 public:
 	// Variables
+	double acc_x;
+	double acc_y;
+	double acc_z;
+	double gyro_x;
+	double gyro_y;
+	double gyro_z;
+	double temp;
 
 	// Constructor, Destructor
 	mpu6050(uint8_t, I2C_HandleTypeDef *);
@@ -198,6 +205,7 @@ public:
 	HAL_StatusTypeDef set_gyro_fullscale_1000();
 	HAL_StatusTypeDef set_gyro_fullscale_2000();
 	HAL_StatusTypeDef get_data_raw(int16_t *);
+	HAL_StatusTypeDef get_data();
 
 }; // end of class
 

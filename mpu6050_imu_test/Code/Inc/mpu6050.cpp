@@ -7,6 +7,8 @@
 
 #include "mpu6050.h"
 #include "string.h"
+#include "math.h"
+
 
 extern UART_HandleTypeDef huart2;
 //extern I2C_HandleTypeDef hi2c1;
@@ -94,7 +96,7 @@ HAL_StatusTypeDef mpu6050::init(){
 
 	// set power management registers
 	tx_buf[0] = MPU6050_RA_PWR_MGMT_1;
-	tx_buf[1] = 0b00000001; //value written to PWR_MGMT_1 register
+	tx_buf[1] = 0b00001001; //value written to PWR_MGMT_1 register
 	tx_buf[2] = 0b00000000; //value written to PWR_MGMT_2 register
 
 	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 3, HAL_MAX_DELAY);
@@ -322,4 +324,26 @@ HAL_StatusTypeDef mpu6050::get_data_raw(int16_t val[])
 	}
 
 	return ret;
+}
+
+HAL_StatusTypeDef mpu6050::get_data()
+{
+	HAL_StatusTypeDef ret;
+	int16_t buf[7];
+
+	ret = get_data_raw(buf);
+
+	if(ret != HAL_OK){
+		return ret;
+	}
+
+	this->acc_x = ACC_FS_VAL * ((double)buf[0] / (double)INT16_MAX);
+	this->acc_y = ACC_FS_VAL * ((double)buf[1] / (double)INT16_MAX);
+	this->acc_z = ACC_FS_VAL * ((double)buf[2] / (double)INT16_MAX);
+	this->temp = (double)buf[3] / 340 + 36.53;
+	this->gyro_x = GYRO_FS_VAL * ((double)buf[4] / (double)INT16_MAX);
+	this->gyro_y = GYRO_FS_VAL * ((double)buf[5] / (double)INT16_MAX);
+	this->gyro_z = GYRO_FS_VAL * ((double)buf[6] / (double)INT16_MAX);
+
+	return HAL_OK;
 }
