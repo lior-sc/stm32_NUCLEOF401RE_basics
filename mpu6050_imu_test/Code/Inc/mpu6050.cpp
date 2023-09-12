@@ -15,7 +15,8 @@ extern UART_HandleTypeDef huart2;
 
 
 
-mpu6050::mpu6050(uint8_t AD0_state, I2C_HandleTypeDef *i2c_handle) {
+mpu6050::mpu6050(uint8_t AD0_state, I2C_HandleTypeDef *i2c_handle)
+{
 	// set MPU6050 device address
 	this->hi2c = i2c_handle;
 	if(AD0_state == GPIO_PIN_SET){
@@ -25,8 +26,11 @@ mpu6050::mpu6050(uint8_t AD0_state, I2C_HandleTypeDef *i2c_handle) {
 		MPU6050_ADDRESS = MPU6050_ADDRESS_AD0_LOW << 1;
 	}
 
-	// Initialize MPU6050
-	this->init();
+	/** @NOTE:
+	 * Initialize MPU6050 outside of constructor using the init() method.
+	 * It does not work well when the IMU is initialized inside the
+	 * constructor. I don't know why.
+	 */
 }
 
 mpu6050::~mpu6050() {
@@ -96,13 +100,14 @@ HAL_StatusTypeDef mpu6050::init(){
 
 	// set power management registers
 	tx_buf[0] = MPU6050_RA_PWR_MGMT_1;
-	tx_buf[1] = 0b00001001; //value written to PWR_MGMT_1 register
+	tx_buf[1] = 0b00000001; //value written to PWR_MGMT_1 register
 	tx_buf[2] = 0b00000000; //value written to PWR_MGMT_2 register
 
 	ret = HAL_I2C_Master_Transmit(hi2c, MPU6050_ADDRESS, tx_buf, 3, HAL_MAX_DELAY);
 
 	// set accelerometer fullscale range
 	this->set_accel_fullscale_2G();
+	this->set_gyro_fullscale_500();
 
 	/*
 	// read power management registers (for debug purposes)
