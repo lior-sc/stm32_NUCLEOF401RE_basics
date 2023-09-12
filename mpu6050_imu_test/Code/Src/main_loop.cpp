@@ -19,15 +19,18 @@ void routine_n3();
 
 void main_loop()
 {
+	// initialize accelerometer
+	acc.init();
 	while(1)
 	{
+//		routine_n1();
+		routine_n2();
 		routine_n3();
 	}
 }
 
 void routine_n1()
 {
-//	acc.init();
 	uint8_t imu_address = 0x00;
 	acc.who_am_i(&imu_address);
 	acc.set_sleep_enabled();
