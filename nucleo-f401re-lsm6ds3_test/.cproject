@@ -67,7 +67,6 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nucleo-f401re-lsm6ds3_test/cpp/Inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nucleo-f401re-lsm6ds3_test/cpp/Inc/lsm6ds3}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1909573091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
