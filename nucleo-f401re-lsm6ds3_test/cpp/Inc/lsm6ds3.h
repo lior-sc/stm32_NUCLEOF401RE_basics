@@ -8,6 +8,7 @@
 #ifndef INC_LSM6DS3_H_
 #define INC_LSM6DS3_H_
 
+//#include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 
 /******************************Registers******************************/
@@ -101,12 +102,16 @@ enum LSM6DS3_REG : uint8_t{
 	LSM6DS3_OUT_MAG_RAW_Y_L,		// r 68 0110 1000 output
 	LSM6DS3_OUT_MAG_RAW_Y_H,		// r 69 0110 1001 output
 	LSM6DS3_OUT_MAG_RAW_Z_L,		// r 6A 0110 1010 output
-	LSM6DS3_OUT_MAG_RAW_X_H			// r 6B 0110 1011 output
+	LSM6DS3_OUT_MAG_RAW_Z_H			// r 6B 0110 1011 output
 };
 
 class lsm6ds3 {
+private:
+	SPI_HandleTypeDef *_hspi;
+	GPIO_TypeDef *_cs_port;
+	uint16_t _cs_pin;
 public:
-	lsm6ds3();
+	lsm6ds3(SPI_HandleTypeDef *, GPIO_TypeDef *, uint16_t);
 	virtual ~lsm6ds3();
 	HAL_StatusTypeDef init();
 };
