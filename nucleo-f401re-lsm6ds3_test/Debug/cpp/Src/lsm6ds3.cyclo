@@ -1,4 +1,0 @@
-../cpp/Src/lsm6ds3.cpp:10:1:lsm6ds3::lsm6ds3()	1
-../cpp/Src/lsm6ds3.cpp:15:1:lsm6ds3::~lsm6ds3()	1
-../cpp/Src/lsm6ds3.cpp:15:1:virtual lsm6ds3::~lsm6ds3()	1
-../cpp/Src/lsm6ds3.cpp:19:19:HAL_StatusTypeDef lsm6ds3::init()	1
